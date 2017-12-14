@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SensoresNPI</string>
+    <string name="act_main_no_accuracy">Esto no tira compae :(</string>
 </resources>
