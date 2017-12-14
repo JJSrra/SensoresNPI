@@ -15,18 +15,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView giroy;
     private TextView giroz;
     private long mRotationTime = 0;
+    SensorManager mSensorManager;
+    Sensor giroscopio;
+    Sensor acelerometro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SensorManager mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Sensor acelerometro = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        Sensor giroscopio = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        acelerometro = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        giroscopio = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
-        girox = (TextView) findViewById(R.id.GiroscopioX);
-        giroy = (TextView) findViewById(R.id.GiroscopioY);
-        giroz = (TextView) findViewById(R.id.GiroscopioZ);
+        girox = findViewById(R.id.GiroscopioX);
+        giroy = findViewById(R.id.GiroscopioY);
+        giroz = findViewById(R.id.GiroscopioZ);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mSensorManager.registerListener(this, giroscopio, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
     }
 
     @Override
