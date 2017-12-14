@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.jjsrra.sensoresnpi">
 
+    <uses-permission android:name="android.hardware.sensor.gyroscope"/>
+    <uses-permission android:name="android.hardware.sensor.accelerometer"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
