@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Sensor giroscopio;
     Sensor acelerometro;
 
+     private static final double Eps = 0.1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             girox.setText("x = " + Float.toString(event.values[0]));
             giroy.setText("y = " + Float.toString(event.values[1]));
             giroz.setText("z = " + Float.toString(event.values[2]));
-            if(event.values[0] < 0.5 && event.values[1] < 0.5 && event.values[2] < 0.5){
+            if(event.values[0] < Eps && event.values[1] < Eps && event.values[2] < Eps){
 
                 posicion.setText("El dispositivo está quieto");
                 background.setBackgroundColor(Color.CYAN);
