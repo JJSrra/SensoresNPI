@@ -14,6 +14,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView girox;
     private TextView giroy;
     private TextView giroz;
+    private TextView aceleracionx;
+    private TextView aceleraciony;
+    private TextView aceleracionz;
+    private TextView posicion;
     private long mRotationTime = 0;
     SensorManager mSensorManager;
     Sensor giroscopio;
@@ -30,12 +34,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         girox = findViewById(R.id.GiroscopioX);
         giroy = findViewById(R.id.GiroscopioY);
         giroz = findViewById(R.id.GiroscopioZ);
+        posicion = findViewById(R.id.GiroscopioPosicion);
+        aceleracionx = findViewById(R.id.AcelerometroX);
+        aceleraciony = findViewById(R.id.AcelerometroY);
+        aceleracionz = findViewById(R.id.AcelerometroZ);
     }
 
     @Override
     protected void onResume(){
         super.onResume();
         mSensorManager.registerListener(this, giroscopio, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, acelerometro, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -61,6 +70,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             girox.setText("x = " + Float.toString(event.values[0]));
             giroy.setText("y = " + Float.toString(event.values[1]));
             giroz.setText("z = " + Float.toString(event.values[2]));
+            if(event.values[0] < 0 && event.values[1] < 0){
+
+                posicion.setText("El movil está en posicion horizontal");
+
+            }
+
+
+        }
+
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            aceleracionx.setText("x = " + Float.toString(event.values[0]));
+            aceleraciony.setText("y = " + Float.toString(event.values[1]));
+            aceleracionz.setText("z = " + Float.toString(event.values[2]));
+
         }
 
     }
