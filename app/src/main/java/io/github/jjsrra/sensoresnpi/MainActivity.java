@@ -18,7 +18,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView aceleraciony;
     private TextView aceleracionz;
     private TextView posicion;
-    private long mRotationTime = 0;
     SensorManager mSensorManager;
     Sensor giroscopio;
     Sensor acelerometro;
@@ -70,10 +69,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             girox.setText("x = " + Float.toString(event.values[0]));
             giroy.setText("y = " + Float.toString(event.values[1]));
             giroz.setText("z = " + Float.toString(event.values[2]));
-            if(event.values[0] < 0 && event.values[1] < 0){
+            if(event.values[0] < 1 && event.values[1] < 1){
 
-                posicion.setText("El movil está en posicion horizontal");
+                posicion.setText("El dispositivo está quieto");
 
+            }
+        else{
+                posicion.setText("El dispositivo está moviéndose");
             }
 
 
