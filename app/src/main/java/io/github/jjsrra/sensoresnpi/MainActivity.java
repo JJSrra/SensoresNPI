@@ -50,14 +50,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         aceleraciony = findViewById(R.id.AcelerometroY);
         aceleracionz = findViewById(R.id.AcelerometroZ);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        button.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v){
-                //if (event.getAction() == MotionEvent.ACTION_BUTTON_PRESS){
+            public boolean onTouch(View v, MotionEvent event){
+                if (event.getAction() == MotionEvent.ACTION_DOWN){
                     background.setBackgroundColor(Color.MAGENTA);
-                    //return true;
-                //}
-                //return false;
+                    return true;
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP){
+                    background.setBackgroundColor(Color.LTGRAY);
+                }
+                return false;
             }
         });
     }
