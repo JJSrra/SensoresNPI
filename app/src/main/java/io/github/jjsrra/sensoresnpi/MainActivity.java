@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.graphics.Color;
+import java.lang.Math;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
 
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             girox.setText("x = " + Float.toString(event.values[0]));
             giroy.setText("y = " + Float.toString(event.values[1]));
             giroz.setText("z = " + Float.toString(event.values[2]));
-            if(event.values[0] < Eps && event.values[1] < Eps && event.values[2] < Eps){
+            if( Math.abs(event.values[0]) < Eps && Math.abs(event.values[1]) < Eps && Math.abs(event.values[2]) < Eps){
 
                 posicion.setText("El dispositivo está quieto");
                 //background.setBackgroundColor(Color.CYAN);
