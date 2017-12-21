@@ -7,6 +7,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.graphics.Color;
@@ -24,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     SensorManager mSensorManager;
     Sensor giroscopio;
     Sensor acelerometro;
+    private Button button;
 
      private static final double Eps = 0.1;
 
@@ -40,9 +44,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         giroz = findViewById(R.id.GiroscopioZ);
         posicion = findViewById(R.id.GiroscopioPosicion);
         background = findViewById(R.id.background);
+        button = findViewById(R.id.button);
         aceleracionx = findViewById(R.id.AcelerometroX);
         aceleraciony = findViewById(R.id.AcelerometroY);
         aceleracionz = findViewById(R.id.AcelerometroZ);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                //if (event.getAction() == MotionEvent.ACTION_BUTTON_PRESS){
+                    background.setBackgroundColor(Color.MAGENTA);
+                    //return true;
+                //}
+                //return false;
+            }
+        });
     }
 
     @Override
@@ -78,11 +94,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if(event.values[0] < Eps && event.values[1] < Eps && event.values[2] < Eps){
 
                 posicion.setText("El dispositivo está quieto");
-                background.setBackgroundColor(Color.CYAN);
+                //background.setBackgroundColor(Color.CYAN);
             }
         else{
                 posicion.setText("El dispositivo está moviéndose");
-                background.setBackgroundColor(Color.GREEN);
+                //background.setBackgroundColor(Color.GREEN);
             }
 
 
