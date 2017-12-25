@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void handleTouch(MotionEvent m){
         int pointerCount = m.getPointerCount();
         if (pointerCount == 2) {
-            String actionString;
             int action = m.getActionMasked();
             switch (action) {
                 case MotionEvent.ACTION_POINTER_DOWN:
@@ -102,8 +101,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     if (diff < -500)
                         multitouch.setText("¡Deslizado con 2 dedos!\nPulsa el botón \"Reiniciar\" para volver a probar");
                     break;
-                default:
-                    actionString = "";
             }
         }
         else{
