@@ -24,11 +24,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView aceleraciony;
     private TextView aceleracionz;
     private TextView posicion;
+    private TextView multitouch;
+    private RelativeLayout background;
     private boolean boton_pulsado;
     SensorManager mSensorManager;
     Sensor giroscopio;
     Sensor acelerometro;
-    private Button button;
+    private Button button, resetButton;
+    private int touch_position_y;
+    private int touch_current_position_y;
 
      private static final double Eps = 0.1;
 
@@ -46,20 +50,66 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         giroz = findViewById(R.id.GiroscopioZ);
         posicion = findViewById(R.id.GiroscopioPosicion);
         button = findViewById(R.id.button);
+        resetButton = findViewById(R.id.resetMultitouch);
         aceleracionx = findViewById(R.id.AcelerometroX);
         aceleraciony = findViewById(R.id.AcelerometroY);
         aceleracionz = findViewById(R.id.AcelerometroZ);
+        background = findViewById(R.id.background);
+        multitouch = findViewById(R.id.multitouch);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        touch_position_y = 0;
+        touch_current_position_y = 0;
+
+        button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 changeButtonStatus();
+            }
+        });
+
+        resetButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                multitouch.setText("Esto cambiará cuando deslices dos dedos sobre la pantalla la suficiente distancia");
+            }
+        });
+
+        background.setOnTouchListener(new RelativeLayout.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent m) {
+                handleTouch(m);
+                return true;
             }
         });
     }
 
     protected void changeButtonStatus(){
         boton_pulsado = !boton_pulsado;
+    }
+
+    protected void handleTouch(MotionEvent m){
+        int pointerCount = m.getPointerCount();
+        if (pointerCount == 2) {
+            String actionString;
+            int action = m.getActionMasked();
+            switch (action) {
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    touch_position_y = (int) m.getY(1);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    touch_current_position_y = (int) m.getY(1);
+                    int diff = touch_position_y - touch_current_position_y;
+                    if (diff < -500)
+                        multitouch.setText("¡Deslizado con 2 dedos!\nPulsa el botón \"Reiniciar\" para volver a probar");
+                    break;
+                default:
+                    actionString = "";
+            }
+        }
+        else{
+            touch_position_y = 0;
+            touch_current_position_y = 0;
+        }
     }
 
     @Override
