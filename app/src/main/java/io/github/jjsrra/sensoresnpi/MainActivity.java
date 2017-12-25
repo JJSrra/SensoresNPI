@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView aceleraciony;
     private TextView aceleracionz;
     private TextView posicion;
-    private RelativeLayout background;
+    private boolean boton_pulsado;
     SensorManager mSensorManager;
     Sensor giroscopio;
     Sensor acelerometro;
@@ -39,30 +39,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         acelerometro = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         giroscopio = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        boton_pulsado = false;
 
         girox = findViewById(R.id.GiroscopioX);
         giroy = findViewById(R.id.GiroscopioY);
         giroz = findViewById(R.id.GiroscopioZ);
         posicion = findViewById(R.id.GiroscopioPosicion);
-        background = findViewById(R.id.background);
         button = findViewById(R.id.button);
         aceleracionx = findViewById(R.id.AcelerometroX);
         aceleraciony = findViewById(R.id.AcelerometroY);
         aceleracionz = findViewById(R.id.AcelerometroZ);
 
-        button.setOnTouchListener(new View.OnTouchListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event){
-                if (event.getAction() == MotionEvent.ACTION_DOWN){
-                    background.setBackgroundColor(Color.MAGENTA);
-                    return true;
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP){
-                    background.setBackgroundColor(Color.LTGRAY);
-                }
-                return false;
+            public void onClick(View v) {
+                changeButtonStatus();
             }
         });
+    }
+
+    protected void changeButtonStatus(){
+        boton_pulsado = !boton_pulsado;
     }
 
     @Override
@@ -91,28 +88,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             return;
         }
 
-        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            girox.setText("x = " + Float.toString(event.values[0]));
-            giroy.setText("y = " + Float.toString(event.values[1]));
-            giroz.setText("z = " + Float.toString(event.values[2]));
-            if( Math.abs(event.values[0]) < Eps && Math.abs(event.values[1]) < Eps && Math.abs(event.values[2]) < Eps){
+        if (boton_pulsado) {
+            if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+                girox.setText("x = " + Float.toString(event.values[0]));
+                giroy.setText("y = " + Float.toString(event.values[1]));
+                giroz.setText("z = " + Float.toString(event.values[2]));
+                if (Math.abs(event.values[0]) < Eps && Math.abs(event.values[1]) < Eps && Math.abs(event.values[2]) < Eps) {
 
-                posicion.setText("El dispositivo está quieto");
-                //background.setBackgroundColor(Color.CYAN);
+                    posicion.setText("El dispositivo está quieto");
+                    //background.setBackgroundColor(Color.CYAN);
+                } else {
+                    posicion.setText("El dispositivo está moviéndose");
+                    //background.setBackgroundColor(Color.GREEN);
+                }
+
+
             }
-        else{
-                posicion.setText("El dispositivo está moviéndose");
-                //background.setBackgroundColor(Color.GREEN);
+
+            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                aceleracionx.setText("x = " + Float.toString(event.values[0]));
+                aceleraciony.setText("y = " + Float.toString(event.values[1]));
+                aceleracionz.setText("z = " + Float.toString(event.values[2]));
+
             }
-
-
-        }
-
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            aceleracionx.setText("x = " + Float.toString(event.values[0]));
-            aceleraciony.setText("y = " + Float.toString(event.values[1]));
-            aceleracionz.setText("z = " + Float.toString(event.values[2]));
-
         }
 
     }
