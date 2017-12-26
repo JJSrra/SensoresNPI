@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.graphics.Color;
 import java.lang.Math;
+import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button button, resetButton;
     private int touch_position_y;
     private int touch_current_position_y;
+    private float global_x, global_y, global_z, current_x, current_y, current_z;
 
      private static final double Eps = 0.1;
 
@@ -56,6 +58,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         aceleracionz = findViewById(R.id.AcelerometroZ);
         background = findViewById(R.id.background);
         multitouch = findViewById(R.id.multitouch);
+
+        global_x = 0;
+        global_y = 0;
+        global_z = 0;
+        current_x = 0;
+        current_y = 0;
+        current_z = 0;
 
         touch_position_y = 0;
         touch_current_position_y = 0;
@@ -85,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     protected void changeButtonStatus(){
         boton_pulsado = !boton_pulsado;
+
     }
 
     protected void handleTouch(MotionEvent m){
@@ -100,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     int diff = touch_position_y - touch_current_position_y;
                     if (diff < -300)
                         multitouch.setText("¡Deslizado con 2 dedos!\nPulsa el botón \"Reiniciar\" para volver a probar");
+                        global_x = 0;
+                        global_y = 0;
+                        global_z = 0;
                     break;
             }
         }
@@ -137,16 +150,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if (boton_pulsado) {
             if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-                girox.setText("x = " + Float.toString(event.values[0]));
-                giroy.setText("y = " + Float.toString(event.values[1]));
-                giroz.setText("z = " + Float.toString(event.values[2]));
-                if (Math.abs(event.values[0]) < Eps && Math.abs(event.values[1]) < Eps && Math.abs(event.values[2]) < Eps) {
+                current_x = event.values[0];
+                current_y = event.values[1];
+                current_z = event.values[2];
 
+                global_x = roundValues(global_x+current_x, 2);
+                global_y = roundValues(global_y+current_y, 2);
+                global_z = roundValues(global_z+current_z, 2);
+
+                girox.setText("x = " + global_x);
+                giroy.setText("y = " + global_y);
+                giroz.setText("z = " + global_z);
+                if (Math.abs(event.values[0]) < Eps && Math.abs(event.values[1]) < Eps && Math.abs(event.values[2]) < Eps) {
                     posicion.setText("El dispositivo está quieto");
-                    //background.setBackgroundColor(Color.CYAN);
                 } else {
                     posicion.setText("El dispositivo está moviéndose");
-                    //background.setBackgroundColor(Color.GREEN);
                 }
 
 
@@ -164,5 +182,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onAccuracyChanged(Sensor event, int accuracy) {}
+
+    public static float roundValues(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
+    }
 }
 
