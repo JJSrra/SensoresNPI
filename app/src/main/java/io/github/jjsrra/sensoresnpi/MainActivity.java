@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 case MotionEvent.ACTION_MOVE:
                     touch_current_position_y = (int) m.getY(1);
                     int diff = touch_position_y - touch_current_position_y;
-                    if (diff < -500)
+                    if (diff < -300)
                         multitouch.setText("¡Deslizado con 2 dedos!\nPulsa el botón \"Reiniciar\" para volver a probar");
                     break;
             }
