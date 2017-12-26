@@ -12,8 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.graphics.Color;
-import java.lang.Math;
 import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
@@ -24,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView aceleracionx;
     private TextView aceleraciony;
     private TextView aceleracionz;
-    private TextView posicion;
     private TextView multitouch;
     private RelativeLayout background;
     private boolean boton_pulsado;
@@ -35,8 +32,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int touch_position_y;
     private int touch_current_position_y;
     private float global_x, global_y, global_z, current_x, current_y, current_z;
-
-     private static final double Eps = 0.1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         girox = findViewById(R.id.GiroscopioX);
         giroy = findViewById(R.id.GiroscopioY);
         giroz = findViewById(R.id.GiroscopioZ);
-        posicion = findViewById(R.id.GiroscopioPosicion);
         button = findViewById(R.id.button);
         resetButton = findViewById(R.id.resetMultitouch);
         aceleracionx = findViewById(R.id.AcelerometroX);
@@ -161,12 +155,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 girox.setText("x = " + global_x);
                 giroy.setText("y = " + global_y);
                 giroz.setText("z = " + global_z);
-                if (Math.abs(event.values[0]) < Eps && Math.abs(event.values[1]) < Eps && Math.abs(event.values[2]) < Eps) {
-                    posicion.setText("El dispositivo está quieto");
-                } else {
-                    posicion.setText("El dispositivo está moviéndose");
-                }
-
 
             }
 
