@@ -7,12 +7,19 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.net.Socket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
 
@@ -32,6 +39,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int touch_position_y;
     private int touch_current_position_y;
     private float global_x, global_y, global_z, current_x, current_y, current_z;
+
+    private static String IP_SERVER = "192.168.0.162";
+    private static int SERVER_PORT = 4000;
+    private Socket s;
+    private DataOutputStream dos;
+    private PrintWriter pw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
+
         resetButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -84,6 +98,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 return true;
             }
         });
+
+        new Thread(new ClientThread()).start();
+
     }
 
     protected void changeButtonStatus(){
@@ -129,6 +146,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mSensorManager.unregisterListener(this);
     }
 
+    protected void sendMessage(String msg){
+        pw.write(msg);
+        //pw.flush();
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
 
@@ -138,6 +160,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 girox.setText(R.string.act_main_no_accuracy);
                 giroy.setText(R.string.act_main_no_accuracy);
                 giroz.setText(R.string.act_main_no_accuracy);
+            }
+
+            if(s != null){
+                sendMessage("Esto no funciona compaeo");
             }
             return;
         }
@@ -156,6 +182,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 giroy.setText("y = " + global_y);
                 giroz.setText("z = " + global_z);
 
+                String giroMsg = global_x+"|"+global_y+"|"+global_z;
+
+                Log.e("TCP client","trying to connect");
             }
 
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -175,6 +204,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         BigDecimal bd = new BigDecimal(Float.toString(d));
         bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
         return bd.floatValue();
+    }
+
+    class ClientThread implements Runnable {
+
+        @Override
+        public void run() {
+
+            try {
+                InetAddress serverAddr = InetAddress.getByName(IP_SERVER);
+
+                s = new Socket(serverAddr, SERVER_PORT);
+                pw = new PrintWriter(s.getOutputStream());
+
+                Log.println(Log.VERBOSE,"socket","conectado al server");
+
+            } catch (UnknownHostException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+        }
+
     }
 }
 
