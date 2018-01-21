@@ -45,12 +45,14 @@ public class tcpClient {
             mSocket = new Socket(serverAddr,SERVER_PORT);
             pw = new PrintWriter(mSocket.getOutputStream());
 
-            Log.println(Log.VERBOSE,"socket","conectado al server");
+            Log.println(Log.DEBUG,"socket","conectado al server");
 
         } catch (UnknownHostException e1) {
             e1.printStackTrace();
+            Log.e("socket","no se pudo conectar con el cliente, unknownhostconnection");
         } catch (IOException e1) {
             e1.printStackTrace();
+            Log.e("socket","no se pudo conectar ioexception");
 
         }
 

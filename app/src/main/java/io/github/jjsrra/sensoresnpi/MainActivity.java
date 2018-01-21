@@ -187,7 +187,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             giroy.setText( "y = " + auy );
             giroz.setText( "z = " + auz );
 
-            String GiroMsg = aux+"|"+auy+"|"+"|"+auz+"\n";
+            String GiroMsg = auz+"\n";
+            Log.println(Log.DEBUG,"message","bytes del mensaje"+GiroMsg.length());
             mTcpClient.sendMessage(GiroMsg);
 
             return;
