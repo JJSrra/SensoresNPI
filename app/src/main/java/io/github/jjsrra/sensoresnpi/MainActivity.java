@@ -126,7 +126,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void changeButtonStatus(){
         boton_pulsado = !boton_pulsado;
         if(!boton_pulsado){
-            last_angle = global_z;
+            last_angle += global_z;
+            last_angle %= 360;
             pausado = true;
         }
 
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 case MotionEvent.ACTION_MOVE:
                     touch_current_position_y = (int) m.getY(1);
                     int diff = touch_position_y - touch_current_position_y;
-                    if (diff < -300) {
+                    if (diff < -200) {
                         String resetMsg = "reset\n";
                         mTcpClient.sendMessage(resetMsg);
                     }
@@ -212,7 +213,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             giroz.setText( "z = " + auz );
 
             global_z = (int) orientaciones[2];
-            int toSend = last_angle+auz;
+
+            int toSend;
+            if(pausado)
+                toSend = (last_angle+auz)%360;
+            else
+                toSend = auz;
+
             String GiroMsg = toSend+"\n";
             Log.println(Log.DEBUG,"message","bytes del mensaje"+GiroMsg.length());
             mTcpClient.sendMessage(GiroMsg);
