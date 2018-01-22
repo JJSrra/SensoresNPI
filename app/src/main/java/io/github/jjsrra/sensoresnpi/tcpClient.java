@@ -1,6 +1,8 @@
 package io.github.jjsrra.sensoresnpi;
 
 import android.util.Log;
+
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -18,6 +20,15 @@ public class tcpClient {
     private PrintWriter pw;
     private Socket mSocket;
     private Boolean run = true;
+
+    public tcpClient(String ip, int port){
+        IP_SERVER = ip;
+        SERVER_PORT = port;
+    }
+
+    public tcpClient(){
+
+    }
 
 
     public void stopClient(){
@@ -47,12 +58,15 @@ public class tcpClient {
 
             Log.println(Log.DEBUG,"socket","conectado al server");
 
+
         } catch (UnknownHostException e1) {
             e1.printStackTrace();
             Log.e("socket","no se pudo conectar con el cliente, unknownhostconnection");
+
         } catch (IOException e1) {
             e1.printStackTrace();
             Log.e("socket","no se pudo conectar ioexception");
+
 
         }
 
