@@ -14,6 +14,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,21 +31,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView girox;
     private TextView giroy;
     private TextView giroz;
-    private TextView multitouch;
     private RelativeLayout background;
     private boolean boton_pulsado;
     SensorManager mSensorManager;
     Sensor giroscopio;
     Sensor acelerometro;
     Sensor rotationSensor;
-    private Button button, resetButton;
+    private Button button, connectButton;
     private int touch_position_y;
     private int touch_current_position_y;
-    private float global_x, global_y, global_z, current_x, current_y, current_z;
+    private int global_x, global_y, global_z, current_x, current_y, current_z;
 
     private connectTask mConnection;
     private tcpClient mTcpClient;
+    private boolean pausado;
+    private int last_angle;
 
+    private TextView iptext,porttext;
 
 
     @Override
@@ -55,14 +60,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         rotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
         boton_pulsado = false;
+        pausado = false;
 
         girox = findViewById(R.id.GiroscopioX);
         giroy = findViewById(R.id.GiroscopioY);
         giroz = findViewById(R.id.GiroscopioZ);
         button = findViewById(R.id.button);
-        resetButton = findViewById(R.id.resetMultitouch);
+        connectButton = findViewById(R.id.connectButton);
         background = findViewById(R.id.background);
-        multitouch = findViewById(R.id.multitouch);
+
+        iptext = findViewById(R.id.ipEdit);
+        porttext = findViewById(R.id.portEdit);
 
         global_x = 0;
         global_y = 0;
@@ -73,9 +81,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         touch_position_y = 0;
         touch_current_position_y = 0;
+        last_angle = 0;
 
-        mConnection = new connectTask();
-        mConnection.execute();
+
 
         button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -85,10 +93,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
 
 
-        resetButton.setOnClickListener(new View.OnClickListener(){
+        connectButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                multitouch.setText("Esto cambiará cuando deslices dos dedos sobre la pantalla la suficiente distancia");
+                if(iptext.getText().toString().isEmpty() || porttext.getText().toString().isEmpty() ) {
+                    mConnection = new connectTask();
+                    mConnection.execute();
+                }
+                else{
+                    String [] params = {iptext.getText().toString(),porttext.getText().toString()};
+                    mConnection = new connectTask();
+                    mConnection.execute(params);
+                }
             }
         });
 
@@ -105,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     protected void changeButtonStatus(){
         boton_pulsado = !boton_pulsado;
+        if(!boton_pulsado){
+            last_angle = global_z;
+            pausado = true;
+        }
 
     }
 
@@ -119,11 +139,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 case MotionEvent.ACTION_MOVE:
                     touch_current_position_y = (int) m.getY(1);
                     int diff = touch_position_y - touch_current_position_y;
-                    if (diff < -300)
-                        multitouch.setText("¡Deslizado con 2 dedos!\nPulsa el botón \"Reiniciar\" para volver a probar");
-                        girox.setText("x = 0");
-                        giroy.setText("y = 0");
-                        giroz.setText("z = 0");
+                    if (diff < -300) {
+                        String resetMsg = "reset\n";
+                        mTcpClient.sendMessage(resetMsg);
+                    }
+
 
                     break;
             }
@@ -187,7 +207,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             giroy.setText( "y = " + auy );
             giroz.setText( "z = " + auz );
 
-            String GiroMsg = auz+"\n";
+            global_z = (int) orientaciones[2];
+            int toSend = last_angle+auz;
+            String GiroMsg = toSend+"\n";
             Log.println(Log.DEBUG,"message","bytes del mensaje"+GiroMsg.length());
             mTcpClient.sendMessage(GiroMsg);
 
@@ -205,12 +227,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return bd.floatValue();
     }
 
-    class connectTask extends AsyncTask<Void, Void, Void> {
+    class connectTask extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... msg){
-            mTcpClient = new tcpClient();
-            mTcpClient.runClient();
+        protected Void doInBackground(String... msg){
+
+            if(msg.length > 0) {
+                String ip = msg[0];
+                int port = new Integer(msg[1]);
+                mTcpClient = new tcpClient(ip, port);
+                mTcpClient.runClient();
+
+            }else{
+                mTcpClient = new tcpClient();
+                mTcpClient.runClient();
+
+            }
 
             return null;
         }
@@ -222,6 +254,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 mTcpClient.stopClient();
             }
         }
+
+
 
 
     }

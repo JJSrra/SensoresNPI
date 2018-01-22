@@ -13,7 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:id="@+id/linearLayout">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,32 +45,41 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/button"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_centerInParent="true"
-        android:id="@+id/button"
-        android:text="Botón"/>
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="33dp"
+        android:text="Botón" />
 
     <Button
+        android:id="@+id/connectButton"
         android:layout_width="120dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="80dp"
-        android:text="Reiniciar"
-        android:id="@+id/resetMultitouch"/>
+        android:layout_alignStart="@+id/button"
+        android:layout_marginBottom="13dp"
+        android:text="Conectar" />
 
-    <TextView
+    <EditText
+        android:id="@+id/ipEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:textAlignment="center"
-        android:id="@+id/multitouch"
-        android:text="Esto cambiará cuando deslices dos dedos sobre la pantalla la suficiente distancia"
-        android:textSize="20sp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_above="@+id/connectButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp"
+        android:ems="10"
+        android:hint="IP" />
+
+    <EditText
+        android:id="@+id/portEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/connectButton"
+        android:layout_alignEnd="@+id/ipEdit"
+        android:ems="10"
+        android:hint="Puerto" />
 
 </RelativeLayout>
 
