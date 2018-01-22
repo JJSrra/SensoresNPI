@@ -99,11 +99,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if(iptext.getText().toString().isEmpty() || porttext.getText().toString().isEmpty() ) {
                     mConnection = new connectTask();
                     mConnection.execute();
+                    iptext.setEnabled(false);
+                    porttext.setEnabled(false);
                 }
                 else{
                     String [] params = {iptext.getText().toString(),porttext.getText().toString()};
                     mConnection = new connectTask();
                     mConnection.execute(params);
+                    iptext.setEnabled(false);
+                    porttext.setEnabled(false);
                 }
             }
         });
